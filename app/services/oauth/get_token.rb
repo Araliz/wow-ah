@@ -3,9 +3,12 @@ require 'net/http'
 
 class Oauth::GetToken < ApplicationService
   def call
+    client_id = ''
+    client_secret = ''
+    
     uri = URI('https://oauth.battle.net/token')
     req = Net::HTTP::Post.new(uri)
-    req.basic_auth 'b2a97185cc3c4c92a949f563d38708ec', 'm39HQUXQmIoenY2I3ag9VQDE83cB3TZ7'
+    req.basic_auth client_id, client_secret
     req.content_type = 'application/x-www-form-urlencoded'
 
     req.set_form_data({

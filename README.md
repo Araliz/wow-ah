@@ -1,24 +1,15 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+docker-compose build
+docker-compose up -d
 
-Things you may want to cover:
+docker-compose exec app bash
 
-* Ruby version
+rails db:create
+rails db:migrate
+rails db:seed
 
-* System dependencies
+rails c
+Auction.reindex
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+docker-compose down

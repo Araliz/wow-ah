@@ -15,7 +15,7 @@ class Realms::Import < ApplicationService
 
       realm_response = connected_realm_response['realms'].count == 1 ? connected_realm_response['realms'].first : connected_realm_response['realms'].detect{|x| x['id'] == id}
 
-      next if realm_response.blank?
+      next if realm_response.blank? || realm_response['category'] == 'Russian'
 
       realm.assign_attributes(
         {

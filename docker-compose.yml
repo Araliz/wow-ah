@@ -1,0 +1,63 @@
+version: "3"
+volumes:
+  postgres_data:
+  redis:
+  elasticsearch:
+services:
+  redis:
+  #   image: 'redis:5-alpine'
+    image: 'redis:7.0'
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server
+    volumes:
+      - redis:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+  db:
+    image: postgres:14.2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  app:
+    platform: linux/x86_64
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      ELASTIC_HOST: elasticsearch
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "3000:3000"
+    links:
+      - db
+      - redis
+      - elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=cluster
+      - discovery.seed_hosts=elasticsearch
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - http.port=9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    restart: always
+    ports:
+      - 9200:9200

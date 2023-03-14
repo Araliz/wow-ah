@@ -1,0 +1,41 @@
+version: "3"
+volumes:
+  postgres_data: {}
+  redis: {}
+services:
+  redis:
+  #   image: 'redis:5-alpine'
+    image: 'redis:7.0'
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server
+    volumes:
+      - redis:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+  db:
+    image: postgres:14.2
+    restart: always
+    env_file:
+        - ./.env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  app:
+    platform: linux/x86_64
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "3000:3000"
+    links:
+      - db
+      - redis

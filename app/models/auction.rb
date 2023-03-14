@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# ProductInventory.searchkick_index.store() to add single element to index
+# Auction.searchkick_index.store() to add single element to index
 
 class Auction
   include ActiveModel::Model
